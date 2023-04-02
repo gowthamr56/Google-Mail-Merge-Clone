@@ -8,6 +8,12 @@ login_email="--YOUR EMAIL ADDRESS--"
 login_passwd="--YOUR EMAIL PASSWORD--"
 ```
 
+### How to Run
+The `automate_emails.py` is the main python file which can be used to send emails. The following command will show you how run and how to provide google sheet url. Notably, the google sheet url should be publicly accessble. Open your terminal and type the following command,
+```shell
+python automate_emails.py "GOOGLE SHEET PUBLIC URL"
+```
+
 ### References
 * Article 1 - [2 easy ways to read Google Sheets data using Python](https://medium.com/geekculture/2-easy-ways-to-read-google-sheets-data-using-python-9e7ef366c775)
 * Article 2 - [Google Sheet API Integration with Python](https://blog.devgenius.io/google-sheet-api-integration-with-python-1793795a9bc4)
