@@ -9,6 +9,8 @@ import time
 import ssl
 import sys
 from read_glsheets import read_glsheets
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 start_time = time.perf_counter()
 
@@ -29,12 +31,23 @@ for index, record in enumerate(records, start=1):
 	first_name = record.get("First Name")
 	last_name = record.get("Last Name")
 	receiver_email = record.get("Receiver")
-	
-	subject: str = "Automating Emails with Python Script - GOOGLE MAIL MERGE CLONE"
-	body: str = f"Hai, {first_name} {last_name},\n\nI am Gowtham. I am a curious Python Programmer, Blogger. I write blogs on medium.com occasionally. Do check out my blogs here (medium.com/@gowtham180502).\n\nTo know more about me, then checkout gowtham.streamlit.app"
 
-	# concatenate the `subject` and the `body` with `\n`
-	msg = f"Subject: {subject}\n{body}"
+	msg = MIMEMultipart("alternative")
+
+	msg["Subject"] = "Automating Emails with Python Script - GOOGLE MAIL MERGE CLONE"
+	
+	html_body = f"""\
+	<html>
+	<body>
+		<h2>Hai {first_name} {last_name}</h2>
+		<p>I am a Gowtham. I am a curious Python Programmer, Blogger. I write blogs on <a href='medium.com/@gowtham180502'>medium</a> occasionally</p>
+		<p>To know more about me, then checkout <a href='gowtham.streamlit.app'>here</a>.</p>
+	</body>
+	</html>
+	"""
+	content = MIMEText(html_body, "html")
+
+	msg.attach(content)
 
 	# add a layer of security to the email that we sent
 	context = ssl.create_default_context()
@@ -50,7 +63,7 @@ for index, record in enumerate(records, start=1):
 
 		smtp.login(login_email, login_passwd)
 	
-		smtp.sendmail(login_email, receiver_email, msg)
+		smtp.sendmail(login_email, receiver_email, msg.as_string())
 
 	os.system("clear") if sys.platform == "linux" else os.system("cls")
 	print(f"Progress: {index} of {len(records)} emails is sent")
