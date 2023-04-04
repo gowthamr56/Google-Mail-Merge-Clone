@@ -8,25 +8,12 @@ import time
 import sys
 from read_glsheets import read_glsheets
 import yagmail
-import argparse
+from argument_parser import parse_arguments
 
 start_time = time.perf_counter()
 
 # load `.env` file
 load_dotenv()
-
-description = """\
-This project is a clone of Mail Merge which is one of the extensions in google sheets using Python.
-"""
-
-parser = argparse.ArgumentParser(description=description)
-
-# defining arguments for CLI
-parser.add_argument("link", help="requires google sheet public url")
-parser.add_argument("-cc", help="requires email addresses for Carbon Copy (CC)", nargs="+")
-parser.add_argument("-bcc", help="requires email addresses for Blind Carbon Copy (BCC)", nargs="+")
-
-args = parser.parse_args()
 
 HOST: str = "smtp.gmail.com"
 PORT: int = 465
@@ -34,8 +21,10 @@ PORT: int = 465
 login_email = os.getenv("login_email")
 login_passwd = os.getenv("login_passwd")  # use `App Passwords` option in gmail (If 2 factor auth is enabled)
 
-cc = args.cc
-bcc = args.bcc
+parse_args = parse_arguments()
+
+cc = parse_args.cc
+bcc = parse_args.bcc
 
 subject = "GOOGLE MAIL MERGE CLONE"
 
