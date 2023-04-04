@@ -13,7 +13,24 @@ The `automate_emails.py` is the main python file which can be used to send email
 ```shell
 python automate_emails.py "GOOGLE SHEET PUBLIC URL"
 ```
+For more details, try help command on the file name
+```shell
+python automate_emails.py --help
+```
+#### Output
+```shell
+usage: automate_emails.py [-h] [-cc CC [CC ...]] [-bcc BCC [BCC ...]] link
 
+This project is a clone of Mail Merge which is one of the extensions in google sheets using Python.
+
+positional arguments:
+  link                requires google sheet public url
+
+options:
+  -h, --help          show this help message and exit
+  -cc CC [CC ...]     requires email addresses for Carbon Copy (CC)
+  -bcc BCC [BCC ...]  requires email addresses for Blind Carbon Copy (BCC)
+```
 ### References
 * Article 1 - [2 easy ways to read Google Sheets data using Python](https://medium.com/geekculture/2-easy-ways-to-read-google-sheets-data-using-python-9e7ef366c775)
 * Article 2 - [Google Sheet API Integration with Python](https://blog.devgenius.io/google-sheet-api-integration-with-python-1793795a9bc4)
