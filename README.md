@@ -2,7 +2,7 @@
 This project is a clone of `Mail Merge` which is one of the extensions in google sheets using `Python`
 ### How to Run
 The `automate_emails.py` is the main python file which can be used to send emails. The following steps will show you how to run this project.
-1. Clone is project.
+1. Clone this project.
 ```bash
 git clone https://github.com/gowthamr56/Google-Mail-Merge-Clone.git
 ```
