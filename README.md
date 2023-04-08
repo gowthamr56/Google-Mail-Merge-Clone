@@ -10,7 +10,7 @@ git clone https://github.com/gowthamr56/Google-Mail-Merge-Clone.git
 ```bash
 pip install -r requirements.txt
 ```
-3. Make sure you created `.env` file. The `.env` file is used to store environmental variables and it should definitely contain two things, one is login email address and password like below,
+3. Make sure you created `.env` file. The `.env` file is used to store environmental variables and it should definitely contain two things, one is login email address and password (use [App Passwords](https://myaccount.google.com/apppasswords/) instead of using actual password) like below,
 ```bash
 login_email="--YOUR EMAIL ADDRESS--"
 login_passwd="--YOUR EMAIL PASSWORD--"
