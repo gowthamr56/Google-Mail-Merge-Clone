@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 import os
 import time
 import sys
-from read_glsheets import read_glsheets
 import yagmail
+from read_glsheets import read_glsheets
 from argument_parser import parse_arguments
 
 start_time = time.perf_counter()
@@ -23,34 +23,29 @@ login_passwd = os.getenv("login_passwd")  # use `App Passwords` option in gmail 
 
 parse_args = parse_arguments()
 
+# parsed arguments
+link = parse_args.link
+subject = parse_args.subject
+content_file = parse_args.content
 cc = parse_args.cc
 bcc = parse_args.bcc
-
-subject = "GOOGLE MAIL MERGE CLONE"
+attachments = parse_args.attach
 
 # reading google sheet data using link
-link = sys.argv[1]
 records = read_glsheets(link)
 
-# initialization
+# reading content file
+with open(content_file, "r") as file:
+	msg_body = file.read()
+
+# yagmail initialization
 smtp = yagmail.SMTP(user=login_email, password=login_passwd, host=HOST, port=PORT)
 
 for index, record in enumerate(records, start=1):
-	first_name = record.get("First Name")
-	last_name = record.get("Last Name")
-	receiver_email = record.get("Receiver")
+	to = record.get("Receiver")
+	content = msg_body.format(**record)
 
-	message_body = f"""\
-	<html>
-	<body>
-		<h3>Hai {first_name} {last_name}</h3>
-		<p>I am a Gowtham. I am a curious Python Programmer, Blogger. I write blogs on <a href='medium.com/@gowtham180502'>medium</a> occasionally</p>
-		<p>To know more about me, then checkout <a href='gowtham.streamlit.app'>here</a>.</p>
-	</body>
-	</html>
-	"""
-
-	smtp.send(to=receiver_email, cc=cc, bcc=bcc, subject=subject, contents=message_body)
+	smtp.send(to=to, cc=cc, bcc=bcc, subject=subject, contents=content, attachments=attachments)
 
 	os.system("clear") if sys.platform == "linux" else os.system("cls")
 	print(f"Progress: {index} of {len(records)} emails is sent")
@@ -59,8 +54,6 @@ for index, record in enumerate(records, start=1):
 smtp.close()
 
 end_time = time.perf_counter()
-
 time_taken = end_time - start_time
-
 print()
 print(f"Script took {round(time_taken, 1)} second(s) to complete")
