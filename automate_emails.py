@@ -7,10 +7,30 @@ import os
 import time
 import sys
 import yagmail
+from typing import Optional
+import threading
 from read_glsheets import read_glsheets
 from argument_parser import parse_arguments
 
 start_time = time.perf_counter()
+
+os.system("clear") if sys.platform == "linux" or "darwin" else os.system("cls")
+
+def send_emails(login_email: str, login_passwd: str, host: int, port: int, records: list, subject: str, cc: Optional[list] = None, bcc: Optional[list] = None, attachments: Optional[str] = None) -> None:
+	# yagmail initialization
+	smtp = yagmail.SMTP(user=login_email, password=login_passwd, host=host, port=port)
+
+	for record in records:
+		to = record.get("Receiver")
+		content = msg_body.format(**record)
+
+		smtp.send(to=to, cc=cc, bcc=bcc, subject=subject, contents=content, attachments=attachments)
+
+		print(f"Mail sent to {to}")
+
+
+	# to close the SMTP server connection 
+	smtp.close()
 
 # load `.env` file
 load_dotenv()
@@ -34,24 +54,27 @@ attachments = parse_args.attach
 # reading google sheet data using link
 records = read_glsheets(link)
 
+# spliting the records into chuncks (each chuncks having 2 records)
+CHUNCK_SIZE: int = 2
+record_chuncks = [records[index:(index + CHUNCK_SIZE)] for index in range(0, len(records), CHUNCK_SIZE)]
+rchuncks_len = len(record_chuncks)
+
 # reading content file
 with open(content_file, "r") as file:
 	msg_body = file.read()
 
-# yagmail initialization
-smtp = yagmail.SMTP(user=login_email, password=login_passwd, host=HOST, port=PORT)
 
-for index, record in enumerate(records, start=1):
-	to = record.get("Receiver")
-	content = msg_body.format(**record)
+# creating threads, each thread will handle 2 mails.
+threads = [threading.Thread(target=send_emails, args=(login_email, login_passwd, HOST, PORT, record_chunck, subject, cc, bcc, attachments)) for record_chunck in record_chuncks]
 
-	smtp.send(to=to, cc=cc, bcc=bcc, subject=subject, contents=content, attachments=attachments)
+# starting all the threads
+for thread in threads:
+	thread.start()
 
-	os.system("clear") if sys.platform == "linux" else os.system("cls")
-	print(f"Progress: {index} of {len(records)} emails is sent")
 
-# to close the SMTP server connection 
-smtp.close()
+for thread in threads:
+	thread.join()
+
 
 end_time = time.perf_counter()
 time_taken = end_time - start_time

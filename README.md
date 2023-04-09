@@ -60,6 +60,8 @@ options:
   -a ATTACH [ATTACH ...], --attach ATTACH [ATTACH ...]
                         expects file locations
 ```
+### Time Complexity
+Before implementing concurrency, script took <b>18 to 20 seconds</b> to send just four emails. But, after the implementation of concurrency, script took <b>9 to 10.5 seconds</b> to send the same four emails. And in the another case, the script took just <b>14.6 seconds</b> to send all the 20 emails.
 ### My References
 * Article 1 - [2 easy ways to read Google Sheets data using Python](https://medium.com/geekculture/2-easy-ways-to-read-google-sheets-data-using-python-9e7ef366c775)
 * Article 2 - [Google Sheet API Integration with Python](https://blog.devgenius.io/google-sheet-api-integration-with-python-1793795a9bc4)
