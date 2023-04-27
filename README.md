@@ -60,6 +60,7 @@ options:
   -a ATTACH [ATTACH ...], --attach ATTACH [ATTACH ...]
                         expects file locations
 ```
+8. After the script is completely ran, all email has been sent and a log file has been created that contains the <b>timestamp</b> at which the email was sent.
 ### Time Complexity
 Before implementing concurrency, script took <b>18 to 20 seconds</b> to send just four emails. But, after the implementation of concurrency, script took <b>9 to 10.5 seconds</b> to send the same four emails. And in the another case, the script took just <b>14.6 seconds</b> to send all the 20 emails.
 ### My References

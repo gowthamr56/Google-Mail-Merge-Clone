@@ -4,9 +4,10 @@
 
 from dotenv import load_dotenv
 import os
-import time
+import time, datetime
 import sys
 import yagmail
+import csv
 from typing import Optional
 import threading
 from read_glsheets import read_glsheets
@@ -16,7 +17,7 @@ start_time = time.perf_counter()
 
 os.system("clear") if sys.platform == "linux" or "darwin" else os.system("cls")
 
-def send_emails(login_email: str, login_passwd: str, host: int, port: int, records: list, subject: str, cc: Optional[list] = None, bcc: Optional[list] = None, attachments: Optional[str] = None) -> None:
+def send_emails(login_email: str, login_passwd: str, host: int, port: int, records: list, subject: str, log_writer, cc: Optional[list] = None, bcc: Optional[list] = None, attachments: Optional[str] = None) -> None:
 	# yagmail initialization
 	smtp = yagmail.SMTP(user=login_email, password=login_passwd, host=host, port=port)
 
@@ -25,6 +26,8 @@ def send_emails(login_email: str, login_passwd: str, host: int, port: int, recor
 		content = msg_body.format(**record)
 
 		smtp.send(to=to, cc=cc, bcc=bcc, subject=subject, contents=content, attachments=attachments)
+
+		log_writer.writerow([to, datetime.datetime.now().strftime("%d-%m-%y, %H:%M:%S")])
 
 		print(f"Mail sent to {to}")
 
@@ -64,8 +67,23 @@ with open(content_file, "r") as file:
 	msg_body = file.read()
 
 
+# logging
+log_fname = "log.csv"
+
+if not log_fname in os.listdir():
+	log_file = open(log_fname, "w")
+
+	log_writer = csv.writer(log_file)
+	log_writer.writerow(["Receiver", "Received At"])
+else:
+	log_file = open(log_fname, "a")
+
+	log_writer = csv.writer(log_file)
+	if os.path.getsize(log_fname) == 0:
+		log_writer.writerow(["Receiver", "Received At"])
+
 # creating threads, each thread will handle 2 mails.
-threads = [threading.Thread(target=send_emails, args=(login_email, login_passwd, HOST, PORT, record_chunck, subject, cc, bcc, attachments)) for record_chunck in record_chuncks]
+threads = [threading.Thread(target=send_emails, args=(login_email, login_passwd, HOST, PORT, record_chunck, subject, log_writer, cc, bcc, attachments)) for record_chunck in record_chuncks]
 
 # starting all the threads
 for thread in threads:
@@ -75,6 +93,7 @@ for thread in threads:
 for thread in threads:
 	thread.join()
 
+log_file.close()
 
 end_time = time.perf_counter()
 time_taken = end_time - start_time
